@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+
+admin.site.site_header = 'LMS Admin'
+admin.site.index_title = 'Welcome to the LMS Admin Portal'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]

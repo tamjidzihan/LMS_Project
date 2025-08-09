@@ -10,37 +10,55 @@ class User(AbstractUser):
     ADMIN = 'admin'
     INSTRUCTOR = 'instructor'
     STUDENT = 'student'
-    
+
     ROLE_CHOICES = [
         (ADMIN, _('Admin')),
         (INSTRUCTOR, _('Instructor')),
         (STUDENT, _('Student')),
     ]
-    
+
     email = models.EmailField(_('email address'), unique=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=STUDENT)
+    phone = models.CharField(blank=True, null=True, unique=True)
+    role = models.CharField(
+        max_length=20, choices=ROLE_CHOICES, default=STUDENT)
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to='profile_pictures/', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-    
+
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
-        
+
     def __str__(self):
         return self.email
-    
+
     @property
     def is_admin(self):
         return self.role == self.ADMIN
-        
+
     @property
     def is_instructor(self):
         return self.role == self.INSTRUCTOR
-        
+
     @property
     def is_student(self):
         return self.role == self.STUDENT
+
+
+class Address(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='user')
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=20)
+    country = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.street}, {self.city}, {self.state}, {self.postal_code}, {self.country}"
