@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from dj_rest_auth.serializers import UserDetailsSerializer
+from dj_rest_auth.registration.serializers import RegisterSerializer
 from .models import Address
 
 User = get_user_model()
@@ -22,7 +23,19 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
 
     class Meta(UserDetailsSerializer.Meta):
         fields = UserDetailsSerializer.Meta.fields + \
-            ('role', 'bio', 'profile_picture')
+            ('role',  'bio', 'profile_picture')
+
+
+class CustomRegisterSerializer(RegisterSerializer):
+    # or required=False if optional
+    phone = serializers.CharField(required=False)
+    _has_phone_field = True
+
+    def get_cleaned_data(self):
+        data = super().get_cleaned_data()
+        validated = getattr(self, 'validated_data', None) or {}
+        data['phone'] = validated.get('phone', '')
+        return data
 
 
 class AdminUserSerializer(serializers.ModelSerializer):

@@ -159,11 +159,14 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+
 # dj-rest-auth settings
 REST_AUTH = {
     'USE_JWT': True,
     'JWT_AUTH_COOKIE': 'lms-auth',
     'JWT_AUTH_REFRESH_COOKIE': 'lms-refresh-token',
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserDetailsSerializer',
 }
 
 

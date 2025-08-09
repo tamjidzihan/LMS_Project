@@ -1,9 +1,11 @@
-from rest_framework import viewsets, permissions, status
+from django.contrib.auth import get_user_model
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
-from .serializers import UserSerializer, AdminUserSerializer
-from .permissions import IsAdminUser, IsInstructorOrAdminUser
+
+from .permissions import IsAdminUser
+from .serializers import AdminUserSerializer, UserSerializer, UserAddressSerializer
+from .models import Address
 
 User = get_user_model()
 
@@ -76,3 +78,14 @@ class UserViewSet(viewsets.ModelViewSet):
         user.role = 'student'
         user.save()
         return Response({'status': 'User role set to student'}, status=status.HTTP_200_OK)
+
+
+class UserAddressViewset(viewsets.ModelViewSet):
+    serializer_class = UserAddressSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_context(self):
+        return {'user_id': self.kwargs['users_pk']}
+
+    def get_queryset(self):
+        return Address.objects.filter(user_id=self.kwargs['users_pk'])
