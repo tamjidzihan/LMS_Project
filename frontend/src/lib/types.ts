@@ -13,17 +13,17 @@ export interface User {
 
 // Authentication related types
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface RegisterData {
   username: string;
   email: string;
-  password: string;
+  password1: string;
+  password2: string;
   first_name: string;
   last_name: string;
-  role?: 'student' | 'instructor';
 }
 
 export interface AuthResponse {

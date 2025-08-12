@@ -27,15 +27,23 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
 
 
 class CustomRegisterSerializer(RegisterSerializer):
-    # or required=False if optional
-    phone = serializers.CharField(required=False)
+    first_name = serializers.CharField(required=True) 
+    last_name = serializers.CharField(required=True) 
     _has_phone_field = True
 
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
         validated = getattr(self, 'validated_data', None) or {}
-        data['phone'] = validated.get('phone', '')
+        data['first_name'] = validated.get('first_name', '')
+        data['last_name'] = validated.get('last_name', '')
         return data
+    
+    def save(self, request):
+        user = super().save(request)
+        user.first_name = self.cleaned_data.get('first_name')
+        user.last_name = self.cleaned_data.get('last_name')
+        user.save()
+        return user
 
 
 class AdminUserSerializer(serializers.ModelSerializer):

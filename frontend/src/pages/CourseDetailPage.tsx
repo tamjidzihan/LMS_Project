@@ -61,7 +61,7 @@ const CourseDetailPage: React.FC = () => {
       navigate('/login', { state: { from: `/courses/${courseId}` } });
       return;
     }
-    
+
     if (course?.price === 0) {
       // Free course, enroll directly
       enrollMutation.mutate();
@@ -115,7 +115,7 @@ const CourseDetailPage: React.FC = () => {
         <div className="lg:col-span-2">
           <h1 className="text-3xl font-bold">{course.title}</h1>
           <p className="text-muted-foreground mt-2">{course.short_description || course.description.substring(0, 150) + '...'}</p>
-          
+
           <div className="flex flex-wrap gap-4 mt-4">
             {course.instructor && (
               <div className="flex items-center text-sm">
@@ -140,10 +140,10 @@ const CourseDetailPage: React.FC = () => {
 
           <div className="mt-8">
             {course.image ? (
-              <img 
-                src={course.image} 
-                alt={course.title} 
-                className="w-full h-auto rounded-lg object-cover" 
+              <img
+                src={course.image}
+                alt={course.title}
+                className="w-full h-auto rounded-lg object-cover"
                 style={{ maxHeight: '400px' }}
               />
             ) : (
@@ -164,7 +164,7 @@ const CourseDetailPage: React.FC = () => {
                 <div className="prose max-w-none">
                   <h3 className="text-xl font-medium mb-3">About This Course</h3>
                   <div dangerouslySetInnerHTML={{ __html: course.description }} />
-                  
+
                   {course.what_will_learn && (
                     <div className="mt-6">
                       <h3 className="text-xl font-medium mb-3">What You'll Learn</h3>
@@ -248,7 +248,7 @@ const CourseDetailPage: React.FC = () => {
                     {course.price > 0 ? `$${course.price.toFixed(2)}` : 'Free'}
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   {isEnrolled ? (
                     <Button className="w-full" variant="outline" asChild>
@@ -257,8 +257,8 @@ const CourseDetailPage: React.FC = () => {
                       </Link>
                     </Button>
                   ) : (
-                    <Button 
-                      className="w-full" 
+                    <Button
+                      className="w-full"
                       onClick={handleEnroll}
                       disabled={enrollMutation.isPending || isEnrollmentLoading}
                     >
@@ -273,7 +273,7 @@ const CourseDetailPage: React.FC = () => {
                     </Button>
                   )}
                 </div>
-                
+
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span>Lessons:</span>

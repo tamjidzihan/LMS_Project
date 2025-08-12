@@ -46,15 +46,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     checkAuth();
   }, []);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await authService.login({ username, password });
-      localStorage.setItem('token', response.token);
+      const response = await authService.login({ email, password });
+      localStorage.setItem('token', response.access);
       setUser(response.user);
       return true;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
+      const errorMessage = error instanceof Error
+        ? error.message
         : 'Login failed. Please check your credentials.';
       toast.error(errorMessage);
       return false;
@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (userData: RegisterData): Promise<boolean> => {
     try {
       const response = await authService.register(userData);
-      localStorage.setItem('token', response.token);
+      localStorage.setItem('token', response.access);
       setUser(response.user);
       return true;
     } catch (error: unknown) {
@@ -110,6 +110,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {

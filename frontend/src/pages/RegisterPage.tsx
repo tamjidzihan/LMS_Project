@@ -20,7 +20,6 @@ const registerSchema = z.object({
   confirmPassword: z.string().min(8, 'Password must be at least 8 characters'),
   first_name: z.string().min(1, 'First name is required'),
   last_name: z.string().min(1, 'Last name is required'),
-  role: z.enum(['student', 'instructor']).default('student'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -43,7 +42,6 @@ const RegisterPage: React.FC = () => {
       confirmPassword: '',
       first_name: '',
       last_name: '',
-      role: 'student',
     },
   });
 
@@ -54,14 +52,14 @@ const RegisterPage: React.FC = () => {
       const userData: RegisterData = {
         username: values.username,
         email: values.email,
-        password: values.password,
+        password1: values.password,
+        password2: values.confirmPassword,
         first_name: values.first_name,
         last_name: values.last_name,
-        role: values.role,
       };
-      
+
       const success = await register(userData);
-      
+
       if (success) {
         toast.success('Registration successful');
         navigate('/dashboard');
@@ -109,7 +107,7 @@ const RegisterPage: React.FC = () => {
                   )}
                 />
               </div>
-              
+
               <FormField
                 control={form.control}
                 name="username"
@@ -123,7 +121,7 @@ const RegisterPage: React.FC = () => {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="email"
@@ -137,7 +135,7 @@ const RegisterPage: React.FC = () => {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="password"
@@ -151,7 +149,7 @@ const RegisterPage: React.FC = () => {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="confirmPassword"
@@ -165,28 +163,8 @@ const RegisterPage: React.FC = () => {
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>I want to</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="student">Learn on this platform</SelectItem>
-                        <SelectItem value="instructor">Teach on this platform</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>

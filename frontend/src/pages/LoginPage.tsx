@@ -12,7 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 // Form validation schema
 const loginSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
+  email: z.string().email('Please enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
@@ -39,7 +39,7 @@ const LoginPage: React.FC = () => {
   // Form submission handler
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const success = await login(data.username, data.password);
+      const success = await login(data.email, data.password);
       if (success) {
         toast.success('Login successful');
         navigate(from);
@@ -61,16 +61,16 @@ const LoginPage: React.FC = () => {
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="text" 
-                        placeholder="Enter your username" 
-                        {...field} 
-                        autoComplete="username"
+                      <Input
+                        type="email"
+                        placeholder="Enter your email address"
+                        {...field}
+                        autoComplete="email"
                       />
                     </FormControl>
                     <FormMessage />
@@ -84,10 +84,10 @@ const LoginPage: React.FC = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="Enter your password" 
-                        {...field} 
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        {...field}
                         autoComplete="current-password"
                       />
                     </FormControl>

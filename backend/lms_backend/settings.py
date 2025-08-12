@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third party apps
+    'corsheaders',
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -192,3 +194,11 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'  # Change to 'mandatory' in production
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_UNIQUE_EMAIL = True
+
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True  # Change this in production
+CORS_ALLOW_CREDENTIALS = True
+
+# Site ID
+SITE_ID = 1
