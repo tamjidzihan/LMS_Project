@@ -18,19 +18,38 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+from rest_framework_nested.routers import NestedDefaultRouter
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
+from users.views import UserViewSet, UserAddressViewset
+from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, ReviewViewSet
 
 admin.site.site_header = 'LMS Admin'
 admin.site.index_title = 'Welcome to the LMS Admin Portal'
 
+
+router = DefaultRouter()
+
+router.register('users', UserViewSet)
+
+user_nested_router = NestedDefaultRouter(router, 'users', lookup='users')
+user_nested_router.register(
+    'address', UserAddressViewset, basename='address')
+
+router.register('categories', CategoryViewSet, basename='category')
+router.register('courses', CourseViewSet, basename='course')
+router.register('lessons', LessonViewSet, basename='lesson')
+router.register('reviews', ReviewViewSet, basename='review')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/', include('users.urls')),
+    path('api/', include(router.urls)),
+    path('api/', include(user_nested_router.urls)),
 
     # Authentication endpoints
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
