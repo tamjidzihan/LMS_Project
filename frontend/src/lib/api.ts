@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Category, Course, PaginatedResponse } from './types';
 
 // Create an axios instance with base URL and common headers
 const API = axios.create({
@@ -76,10 +77,18 @@ export const userService = {
   },
 };
 
+// Category Service
+export const categoryService = {
+  getAllCategory: async () => {
+    const response = await API.get<PaginatedResponse<Category>>('/categories/')
+    return response.data
+  }
+}
+
 // Course service
 export const courseService = {
   getAllCourses: async (params) => {
-    const response = await API.get('/courses/', { params });
+    const response = await API.get<PaginatedResponse<Course>>('/courses/', { params });
     return response.data;
   },
 

@@ -1,8 +1,11 @@
+import { string } from "zod";
+
 // User related types
 export interface User {
   id: string;
   username: string;
   email: string;
+  phone?: string;
   first_name: string;
   last_name: string;
   role: 'student' | 'instructor' | 'admin';
@@ -31,29 +34,28 @@ export interface AuthResponse {
   user: User;
 }
 
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string
+}
+
 // Course related types
 export interface Course {
   id: string;
   title: string;
-  short_description?: string;
+  slug: string;
   description: string;
   instructor: User;
-  category: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
-  price: number;
-  is_published: boolean;
+  category: Category;
+  price: string;
+  discount_price: string;
+  is_published?: boolean;
   image?: string;
-  average_rating: number;
-  enrollment_count: number;
   created_at: string;
-  updated_at: string;
-  duration: number;
-  language?: string;
-  has_preview: boolean;
-  lessons?: Lesson[];
-  reviews?: Review[];
-  learning_objectives?: string[];
-  requirements?: string[];
+  average_rating: number;
+  lessons_count: number;
 }
 
 export interface CourseFilters {

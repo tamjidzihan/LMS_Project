@@ -96,13 +96,13 @@ const HomePage: React.FC = () => {
                   </CardHeader>
                   <CardContent className="p-6">
                     <CardTitle className="mb-2 line-clamp-1">{course.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{course.short_description || course.description}</p>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{course.description}</p>
                     <div className="flex justify-between text-sm">
                       <div className="flex items-center">
                         <span className="text-yellow-500 mr-1">★</span>
                         <span>{course.average_rating.toFixed(1)}</span>
                       </div>
-                      <span className="font-medium">{course.price > 0 ? `$${course.price.toFixed(2)}` : 'Free'}</span>
+                      <span className="font-medium">{parseFloat(course.price) > 0 ? `$${parseFloat(course.price).toFixed(2)}` : 'Free'}</span>
                     </div>
                   </CardContent>
                   <CardFooter className="p-6 pt-0">

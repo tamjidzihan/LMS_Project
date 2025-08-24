@@ -16,7 +16,7 @@ interface CourseParams {
 }
 
 const CourseDetailPage: React.FC = () => {
-  const { id } = useParams<CourseParams>();
+  const { id } = useParams();
   const courseId = id || '';
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
@@ -26,14 +26,14 @@ const CourseDetailPage: React.FC = () => {
   // Fetch course details
   const { data: course, isLoading } = useQuery({
     queryKey: ['course', courseId],
-    queryFn: () => courseService.getCourseById(courseId),
+    queryFn: () => courseService.getCourse(courseId),
     enabled: !!courseId,
   });
 
   // Check if user is enrolled
   const { data: userEnrollments, isLoading: isEnrollmentLoading } = useQuery({
     queryKey: ['userEnrollments', user?.id],
-    queryFn: () => enrollmentService.getUserEnrollments(),
+    queryFn: () => enrollmentService.getEnrollments(),
     enabled: isAuthenticated && !!user?.id,
   });
 
@@ -245,7 +245,7 @@ const CourseDetailPage: React.FC = () => {
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold">
-                    {course.price > 0 ? `$${course.price.toFixed(2)}` : 'Free'}
+                    {parseFloat(course.price) > 0 ? `$${parseFloat(course.price).toFixed(2)}` : 'Free'}
                   </div>
                 </div>
 
@@ -305,7 +305,7 @@ const CourseDetailPage: React.FC = () => {
             <DialogTitle>Confirm Enrollment</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p>You are about to enroll in <strong>{course.title}</strong> for <strong>${course.price.toFixed(2)}</strong>.</p>
+            <p>You are about to enroll in <strong>{course.title}</strong> for <strong>${parseFloat(course.price).toFixed(2)}</strong>.</p>
             <p className="mt-2 text-muted-foreground">
               Note: This is a demo application. No actual payment will be processed.
             </p>

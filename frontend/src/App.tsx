@@ -28,7 +28,7 @@ function App() {
             <Route path="/courses/:id" element={<Layout><CourseDetailPage /></Layout>} />
             <Route path="/login" element={<Layout><LoginPage /></Layout>} />
             <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
-            
+
             {/* Protected Routes */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
@@ -45,7 +45,7 @@ function App() {
                 <Layout><SettingsPage /></Layout>
               </ProtectedRoute>
             } />
-            
+
             {/* 404 Not Found */}
             <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
           </Routes>

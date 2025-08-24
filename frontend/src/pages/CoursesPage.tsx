@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { courseService } from '@/lib/api';
+import { categoryService, courseService } from '@/lib/api';
 import { Course } from '@/lib/types';
 import { SearchIcon, SlidersHorizontal, Star } from 'lucide-react';
 import {
@@ -40,14 +40,11 @@ const CoursesPage: React.FC = () => {
     }),
   });
 
-  // Categories for filter
-  const categories = [
-    { id: 'development', name: 'Development' },
-    { id: 'business', name: 'Business' },
-    { id: 'design', name: 'Design' },
-    { id: 'marketing', name: 'Marketing' },
-    { id: 'personal-development', name: 'Personal Development' },
-  ];
+  const { data: categoryData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryService.getAllCategory()
+  })
+
 
   // Levels for filter
   const levels = [
@@ -79,24 +76,24 @@ const CoursesPage: React.FC = () => {
 
   const renderPagination = () => {
     if (!coursesData) return null;
-    
+
     const totalPages = Math.ceil(coursesData.count / 12);
     if (totalPages <= 1) return null;
-    
+
     const pageNumbers = [];
     const maxVisiblePages = 5;
-    
+
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
     const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
+
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
-    
+
     return (
       <div className="flex justify-center mt-8">
         <div className="flex items-center space-x-1">
@@ -108,7 +105,7 @@ const CoursesPage: React.FC = () => {
           >
             &lt;
           </Button>
-          
+
           {startPage > 1 && (
             <>
               <Button
@@ -121,7 +118,7 @@ const CoursesPage: React.FC = () => {
               {startPage > 2 && <span className="px-2">...</span>}
             </>
           )}
-          
+
           {pageNumbers.map((number) => (
             <Button
               key={number}
@@ -132,7 +129,7 @@ const CoursesPage: React.FC = () => {
               {number}
             </Button>
           ))}
-          
+
           {endPage < totalPages && (
             <>
               {endPage < totalPages - 1 && <span className="px-2">...</span>}
@@ -145,7 +142,7 @@ const CoursesPage: React.FC = () => {
               </Button>
             </>
           )}
-          
+
           <Button
             variant="outline"
             size="icon"
@@ -162,7 +159,7 @@ const CoursesPage: React.FC = () => {
   return (
     <div className="container py-10">
       <h1 className="text-3xl font-bold mb-6">Courses</h1>
-      
+
       <div className="flex flex-col md:flex-row gap-8">
         {/* Filters - Desktop */}
         <div className="w-full md:w-64 hidden md:block">
@@ -171,21 +168,21 @@ const CoursesPage: React.FC = () => {
               <h3 className="font-medium mb-3">Category</h3>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="all-categories" 
-                    checked={category === ''} 
+                  <Checkbox
+                    id="all-categories"
+                    checked={category === ''}
                     onCheckedChange={() => {
                       setCategory('');
                       handleFilterChange();
-                    }} 
+                    }}
                   />
                   <Label htmlFor="all-categories">All Categories</Label>
                 </div>
-                
-                {categories.map((cat) => (
+
+                {categoryData?.results.map((cat) => (
                   <div key={cat.id} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`category-${cat.id}`} 
+                    <Checkbox
+                      id={`category-${cat.id}`}
                       checked={category === cat.id}
                       onCheckedChange={() => {
                         setCategory(cat.id);
@@ -197,26 +194,26 @@ const CoursesPage: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <h3 className="font-medium mb-3">Level</h3>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="all-levels" 
-                    checked={level === ''} 
+                  <Checkbox
+                    id="all-levels"
+                    checked={level === ''}
                     onCheckedChange={() => {
                       setLevel('');
                       handleFilterChange();
-                    }} 
+                    }}
                   />
                   <Label htmlFor="all-levels">All Levels</Label>
                 </div>
-                
+
                 {levels.map((lvl) => (
                   <div key={lvl.id} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`level-${lvl.id}`} 
+                    <Checkbox
+                      id={`level-${lvl.id}`}
                       checked={level === lvl.id}
                       onCheckedChange={() => {
                         setLevel(lvl.id);
@@ -228,7 +225,7 @@ const CoursesPage: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <h3 className="font-medium mb-3">Price</h3>
               <div className="space-y-4">
@@ -248,9 +245,9 @@ const CoursesPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
-            <Button 
-              variant="outline" 
+
+            <Button
+              variant="outline"
               className="w-full"
               onClick={clearFilters}
             >
@@ -258,7 +255,7 @@ const CoursesPage: React.FC = () => {
             </Button>
           </div>
         </div>
-        
+
         {/* Mobile Filters */}
         <div className="md:hidden mb-4">
           <Sheet>
@@ -280,21 +277,21 @@ const CoursesPage: React.FC = () => {
                   <h3 className="font-medium mb-3">Category</h3>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="mobile-all-categories" 
-                        checked={category === ''} 
+                      <Checkbox
+                        id="mobile-all-categories"
+                        checked={category === ''}
                         onCheckedChange={() => {
                           setCategory('');
                           handleFilterChange();
-                        }} 
+                        }}
                       />
                       <Label htmlFor="mobile-all-categories">All Categories</Label>
                     </div>
-                    
-                    {categories.map((cat) => (
+
+                    {categoryData?.results.map((cat) => (
                       <div key={cat.id} className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`mobile-category-${cat.id}`} 
+                        <Checkbox
+                          id={`mobile-category-${cat.id}`}
                           checked={category === cat.id}
                           onCheckedChange={() => {
                             setCategory(cat.id);
@@ -306,26 +303,26 @@ const CoursesPage: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium mb-3">Level</h3>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="mobile-all-levels" 
-                        checked={level === ''} 
+                      <Checkbox
+                        id="mobile-all-levels"
+                        checked={level === ''}
                         onCheckedChange={() => {
                           setLevel('');
                           handleFilterChange();
-                        }} 
+                        }}
                       />
                       <Label htmlFor="mobile-all-levels">All Levels</Label>
                     </div>
-                    
+
                     {levels.map((lvl) => (
                       <div key={lvl.id} className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`mobile-level-${lvl.id}`} 
+                        <Checkbox
+                          id={`mobile-level-${lvl.id}`}
                           checked={level === lvl.id}
                           onCheckedChange={() => {
                             setLevel(lvl.id);
@@ -337,7 +334,7 @@ const CoursesPage: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium mb-3">Price</h3>
                   <div className="space-y-4">
@@ -357,16 +354,16 @@ const CoursesPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex space-x-2 pt-4">
-                  <Button 
+                  <Button
                     className="flex-1"
                     onClick={() => document.querySelector<HTMLButtonElement>('button[aria-label="close"]')?.click()}
                   >
                     Apply Filters
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="flex-1"
                     onClick={() => {
                       clearFilters();
@@ -380,14 +377,14 @@ const CoursesPage: React.FC = () => {
             </SheetContent>
           </Sheet>
         </div>
-        
+
         {/* Courses List */}
         <div className="flex-1">
           {/* Search */}
           <form onSubmit={handleSearch} className="mb-6">
             <div className="relative">
               <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input 
+              <Input
                 type="search"
                 placeholder="Search for courses"
                 className="pl-10"
@@ -396,13 +393,13 @@ const CoursesPage: React.FC = () => {
               />
             </div>
           </form>
-          
+
           {/* Sort */}
           <div className="flex justify-between items-center mb-6">
             <p className="text-sm text-muted-foreground">
               {coursesData ? `Showing ${coursesData.results.length} of ${coursesData.count} courses` : 'Loading courses...'}
             </p>
-            
+
             <Select defaultValue="relevance">
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Sort by" />
@@ -416,7 +413,7 @@ const CoursesPage: React.FC = () => {
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Courses Grid */}
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -467,7 +464,7 @@ const CoursesPage: React.FC = () => {
                           {course.title}
                         </h3>
                         <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                          {course.short_description || course.description.substring(0, 100)}
+                          {course.description.substring(0, 100)}
                         </p>
                         {course.instructor && (
                           <p className="text-xs text-muted-foreground">
@@ -481,7 +478,11 @@ const CoursesPage: React.FC = () => {
                           <span className="text-sm font-medium">{course.average_rating.toFixed(1)}</span>
                         </div>
                         <span className="font-semibold">
-                          {course.price > 0 ? `$${course.price.toFixed(2)}` : 'Free'}
+                          {
+                            parseFloat(course.price) > 0
+                              ? `$${parseFloat(course.price).toFixed(2)}`
+                              : 'Free'
+                          }
                         </span>
                       </CardFooter>
                     </Card>
