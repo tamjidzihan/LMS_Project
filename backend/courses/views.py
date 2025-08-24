@@ -26,6 +26,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
         - List/retrieve: authenticated
         - Create/update/partial_update/destroy: admin only
         """
+        if self.action in ['list', 'retrieve']:
+            return [permissions.AllowAny()]
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [permissions.IsAuthenticated()]
@@ -48,13 +50,15 @@ class CourseViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
 
-        # Instructors see only their own courses
-        if user.role == 'instructor':  # type: ignore
-            return Course.objects.filter(instructor=user)
+        # Check if user is authenticated before accessing role
+        if user.is_authenticated:
+            # Instructors see only their own courses
+            if user.role == 'instructor':  # type: ignore
+                return Course.objects.filter(instructor=user)
 
-        # Admins see all courses
-        if user.role == 'admin':  # type: ignore
-            return Course.objects.all()
+            # Admins see all courses
+            if user.role == 'admin':  # type: ignore
+                return Course.objects.all()
 
         # Students and unauthenticated users see only published courses
         return Course.objects.filter(is_published=True)
@@ -75,6 +79,8 @@ class CourseViewSet(viewsets.ModelViewSet):
         - Create: instructor or admin
         - Update/partial_update/destroy: owner or admin
         """
+        if self.action in ['list', 'retrieve']:
+            return [permissions.AllowAny()]
         if self.action in ['update', 'partial_update', 'destroy']:
             return [IsOwnerOrReadOnly()]
         elif self.action == 'create':

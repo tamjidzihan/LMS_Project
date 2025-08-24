@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
-import { courseService } from '@/lib/api';
+import { categoryService, courseService } from '@/lib/api';
 import { Course } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -14,12 +14,10 @@ const HomePage: React.FC = () => {
     select: (data) => data.results.slice(0, 3)
   });
 
-  const categories = [
-    { id: 'development', title: 'Development', description: 'Learn programming and software development', icon: '💻' },
-    { id: 'design', title: 'Design', description: 'Master digital and graphic design', icon: '🎨' },
-    { id: 'business', title: 'Business', description: 'Enhance your business skills', icon: '📊' },
-    { id: 'marketing', title: 'Marketing', description: 'Learn digital marketing strategies', icon: '📱' },
-  ];
+  const { data: categoryData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryService.getAllCategory()
+  })
 
   return (
     <div className="flex flex-col">
@@ -138,12 +136,11 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-            {categories.map((category) => (
+            {categoryData?.results.map((category) => (
               <Link to={`/courses?category=${category.id}`} key={category.id}>
                 <Card className="group hover:shadow-md transition-all">
                   <CardContent className="p-6 text-center">
-                    <div className="mb-4 text-4xl">{category.icon}</div>
-                    <h3 className="text-lg font-medium mb-2">{category.title}</h3>
+                    <h3 className="text-lg font-medium mb-2">{category.name}</h3>
                     <p className="text-sm text-muted-foreground">{category.description}</p>
                   </CardContent>
                 </Card>
